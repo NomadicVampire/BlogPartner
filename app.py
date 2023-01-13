@@ -5,6 +5,7 @@ from datetime import datetime
 app = Flask(__name__)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///blog.db'
+# app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 db = SQLAlchemy(app)
 
 # manage worst case situations
@@ -18,11 +19,8 @@ class Blogpost(db.Model):
     date_posted = db.Column(db.DateTime, default = datetime.utcnow)
     content = db.Column(db.Text)
 
-@app.route('/blogapp/healthcheck')
-def health():
-    return {200}
 
-@app.route('/blogapp/')
+@app.route('/')
 def index():
     posts = Blogpost.query.all()
     return render_template('index.html', posts = posts)
