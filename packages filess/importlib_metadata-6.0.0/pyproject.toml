@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=56", "setuptools_scm[toml]>=3.4.1"]
+build-backend = "setuptools.build_meta"
+
+[tool.black]
+skip-string-normalization = true
+
+[tool.setuptools_scm]
+
+[tool.pytest-enabler.black]
+addopts = "--black"
+
+[tool.pytest-enabler.mypy]
+addopts = "--mypy"
+
+[tool.pytest-enabler.flake8]
+# disabled due to PyCQA/flake8#1438
+# addopts = "--flake8"
+
+[tool.pytest-enabler.cov]
+addopts = "--cov"

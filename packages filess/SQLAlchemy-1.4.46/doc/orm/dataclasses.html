@@ -1,0 +1,774 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+        <title>
+            
+    
+    Integration with dataclasses and attrs
+ &mdash;
+    SQLAlchemy 1.4 Documentation
+
+        </title>
+
+        
+            <!-- begin iterate through site-imported + sphinx environment css_files -->
+                <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+                <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+                <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+                <link rel="stylesheet" href="../_static/copybutton.css" type="text/css" />
+                <link rel="stylesheet" href="../_static/docs.css" type="text/css" />
+                <link rel="stylesheet" href="../_static/changelog.css" type="text/css" />
+                <link rel="stylesheet" href="../_static/sphinx_paramlinks.css" type="text/css" />
+            <!-- end iterate through site-imported + sphinx environment css_files -->
+        
+
+        
+
+    
+
+    <!-- begin layout.mako headers -->
+
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+        <link rel="copyright" title="Copyright" href="../copyright.html" />
+    <link rel="top" title="SQLAlchemy 1.4 Documentation" href="../index.html" />
+        <link rel="up" title="ORM Mapped Class Configuration" href="mapper_config.html" />
+        <link rel="next" title="Mapping Columns and Expressions" href="scalar_mapping.html" />
+        <link rel="prev" title="Composing Mapped Hierarchies with Mixins" href="declarative_mixins.html" />
+    <!-- end layout.mako headers -->
+
+
+    </head>
+    <body>
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div id="docs-container">
+
+
+
+
+
+<div id="docs-top-navigation-container" class="body-background">
+<div id="docs-header">
+    <div id="docs-version-header">
+        Release: <span class="version-num">1.4.46</span>
+
+
+        | Release Date: January 3, 2023
+
+    </div>
+
+    <h1><a href="../index.html">SQLAlchemy 1.4 Documentation</a></h1>
+
+</div>
+</div>
+
+<div id="docs-body-container">
+
+    <div id="fixed-sidebar" class="withsidebar">
+
+
+
+        <div id="docs-sidebar-popout">
+            <h3><a href="../index.html">SQLAlchemy 1.4 Documentation</a></h3>
+            <p id="sidebar-topnav">
+                <a href="../index.html">Home</a>
+            </p>
+
+            <div id="sidebar-search">
+                <form class="search" action="../search.html" method="get">
+                  <label>
+                  Search terms:
+                  <input type="text" placeholder="search..." name="q" size="12" />
+                  </label>
+                  <input type="hidden" name="check_keywords" value="yes" />
+                  <input type="hidden" name="area" value="default" />
+                </form>
+            </div>
+
+        </div>
+
+        <div id="docs-sidebar">
+
+        <div id="sidebar-banner">
+            
+        </div>
+
+        <div id="docs-sidebar-inner">
+
+        
+        <h3>
+            <a href="index.html" title="SQLAlchemy ORM">SQLAlchemy ORM</a>
+        </h3>
+
+        <ul>
+<li><span class="link-container"><a class="reference external" href="quickstart.html">ORM Quick Start</a></span></li>
+<li><span class="link-container"><a class="reference external" href="tutorial.html">Object Relational Tutorial (1.x API)</a></span></li>
+<li><span class="link-container"><a class="reference external" href="mapper_config.html">ORM Mapped Class Configuration</a></span><ul>
+<li><span class="link-container"><a class="reference external" href="mapping_styles.html">ORM Mapped Class Overview</a></span></li>
+<li><span class="link-container"><a class="reference external" href="declarative_mapping.html">Mapping Classes with Declarative</a></span></li>
+<li class="selected"><span class="link-container"><strong>Integration with dataclasses and attrs</strong><a class="paramlink headerlink reference internal" href="#">¶</a></span><ul>
+<li><span class="link-container"><a class="reference external" href="#applying-orm-mappings-to-an-existing-dataclass">Applying ORM Mappings to an existing dataclass</a></span><ul>
+<li><span class="link-container"><a class="reference external" href="#mapping-dataclasses-using-declarative-with-imperative-table">Mapping dataclasses using Declarative With Imperative Table</a></span></li>
+<li><span class="link-container"><a class="reference external" href="#mapping-dataclasses-using-declarative-mapping">Mapping dataclasses using Declarative Mapping</a></span></li>
+<li><span class="link-container"><a class="reference external" href="#mapping-dataclasses-using-imperative-mapping">Mapping dataclasses using Imperative Mapping</a></span><ul>
+<li><span class="link-container"><a class="reference external" href="#using-declarative-mixins-with-dataclasses">Using Declarative Mixins with Dataclasses</a></span></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><span class="link-container"><a class="reference external" href="#applying-orm-mappings-to-an-existing-attrs-class">Applying ORM mappings to an existing attrs class</a></span><ul>
+<li><span class="link-container"><a class="reference external" href="#mapping-attrs-with-declarative-imperative-table">Mapping attrs with Declarative “Imperative Table”</a></span></li>
+<li><span class="link-container"><a class="reference external" href="#mapping-attrs-with-imperative-mapping">Mapping attrs with Imperative Mapping</a></span></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><span class="link-container"><a class="reference external" href="scalar_mapping.html">Mapping Columns and Expressions</a></span></li>
+<li><span class="link-container"><a class="reference external" href="inheritance.html">Mapping Class Inheritance Hierarchies</a></span></li>
+<li><span class="link-container"><a class="reference external" href="nonstandard_mappings.html">Non-Traditional Mappings</a></span></li>
+<li><span class="link-container"><a class="reference external" href="versioning.html">Configuring a Version Counter</a></span></li>
+<li><span class="link-container"><a class="reference external" href="mapping_api.html">Class Mapping API</a></span></li>
+</ul>
+</li>
+<li><span class="link-container"><a class="reference external" href="relationships.html">Relationship Configuration</a></span></li>
+<li><span class="link-container"><a class="reference external" href="loading_objects.html">Querying Data, Loading Objects</a></span></li>
+<li><span class="link-container"><a class="reference external" href="session.html">Using the Session</a></span></li>
+<li><span class="link-container"><a class="reference external" href="extending.html">Events and Internals</a></span></li>
+<li><span class="link-container"><a class="reference external" href="extensions/index.html">ORM Extensions</a></span></li>
+<li><span class="link-container"><a class="reference external" href="examples.html">ORM Examples</a></span></li>
+</ul>
+
+
+
+        </div>
+
+        </div>
+
+    </div>
+
+    <div id="narrow-index-nav">
+        <form class="search" action="../search.html" method="get">
+            <label>
+                Search terms:
+            <input type="text" placeholder="search..." name="q" size="12" />
+            </label>
+            <input type="submit" value="Search" />
+            <input type="hidden" name="check_keywords" value="yes" />
+            <input type="hidden" name="area" value="default" />
+        </form>
+
+        <p>
+        <a href="../index.html">Home</a>
+        </p>
+
+    </div>
+
+
+        <div id="docs-narrow-top-navigation">
+            <ul>
+                <li><b>Previous:</b>
+                <a href="declarative_mixins.html" title="previous chapter">Composing Mapped Hierarchies with Mixins</a></li>
+                <li><b>Next:</b>
+                <a href="scalar_mapping.html" title="next chapter">Mapping Columns and Expressions</a></li>
+
+            <li><b>Up:</b> <a href="../index.html">Home</a></li>
+                    <ul><li><a href="index.html" title="SQLAlchemy ORM">SQLAlchemy ORM</a></li>
+                    <ul><li><a href="mapper_config.html" title="ORM Mapped Class Configuration">ORM Mapped Class Configuration</a></li>
+                </ul>
+                </ul>
+
+
+
+            <li><b>On this page:</b></li>
+            <ul>
+<li><a class="reference internal" href="#integration-with-dataclasses-and-attrs">Integration with dataclasses and attrs</a><ul>
+<li><a class="reference internal" href="#applying-orm-mappings-to-an-existing-dataclass">Applying ORM Mappings to an existing dataclass</a><ul>
+<li><a class="reference internal" href="#mapping-dataclasses-using-declarative-with-imperative-table">Mapping dataclasses using Declarative With Imperative Table</a></li>
+<li><a class="reference internal" href="#mapping-dataclasses-using-declarative-mapping">Mapping dataclasses using Declarative Mapping</a></li>
+<li><a class="reference internal" href="#mapping-dataclasses-using-imperative-mapping">Mapping dataclasses using Imperative Mapping</a><ul>
+<li><a class="reference internal" href="#using-declarative-mixins-with-dataclasses">Using Declarative Mixins with Dataclasses</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#applying-orm-mappings-to-an-existing-attrs-class">Applying ORM mappings to an existing attrs class</a><ul>
+<li><a class="reference internal" href="#mapping-attrs-with-declarative-imperative-table">Mapping attrs with Declarative “Imperative Table”</a></li>
+<li><a class="reference internal" href="#mapping-attrs-with-imperative-mapping">Mapping attrs with Imperative Mapping</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+
+            </ul>
+
+        </div>
+
+
+
+    <div id="docs-body" role="main" class="withsidebar orm-dataclasses" >
+        
+<section id="integration-with-dataclasses-and-attrs">
+<span id="orm-dataclasses-toplevel"></span><h1>Integration with dataclasses and attrs<a class="headerlink" href="#integration-with-dataclasses-and-attrs" title="Permalink to this heading">¶</a></h1>
+<p>SQLAlchemy 1.4 has limited support for ORM mappings that are established
+against classes that have already been pre-instrumented using either Python’s
+built-in <a class="reference external" href="https://docs.python.org/3/library/dataclasses.html">dataclasses</a> library or the <a class="reference external" href="https://pypi.org/project/attrs/">attrs</a> third party integration library.</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>SQLAlchemy 2.0 will include a new dataclass integration feature which
+allows for a particular class to be mapped and converted into a Python
+dataclass simultaneously, with full support for SQLAlchemy’s declarative
+syntax.  Within the scope of the 1.4 release, the <code class="docutils literal notranslate"><span class="pre">&#64;dataclass</span></code> decorator
+is used separately as documented in this section.</p>
+</div>
+<section id="applying-orm-mappings-to-an-existing-dataclass">
+<span id="orm-declarative-dataclasses"></span><h2>Applying ORM Mappings to an existing dataclass<a class="headerlink" href="#applying-orm-mappings-to-an-existing-dataclass" title="Permalink to this heading">¶</a></h2>
+<p>The <a class="reference external" href="https://docs.python.org/3/library/dataclasses.html">dataclasses</a> module, added in Python 3.7, provides a <code class="docutils literal notranslate"><span class="pre">&#64;dataclass</span></code> class
+decorator to automatically generate boilerplate definitions of common object
+methods including <code class="docutils literal notranslate"><span class="pre">__init__()</span></code>, <code class="docutils literal notranslate"><span class="pre">__repr()__</span></code>, and other methods. SQLAlchemy
+supports the application of ORM mappings to a class after it has been processed
+with the <code class="docutils literal notranslate"><span class="pre">&#64;dataclass</span></code> decorator, by using either the
+<a class="reference internal" href="mapping_api.html#sqlalchemy.orm.registry.mapped" title="sqlalchemy.orm.registry.mapped"><code class="xref py py-meth docutils literal notranslate"><span class="pre">registry.mapped()</span></code></a> class decorator, or the
+<a class="reference internal" href="mapping_api.html#sqlalchemy.orm.registry.map_imperatively" title="sqlalchemy.orm.registry.map_imperatively"><code class="xref py py-meth docutils literal notranslate"><span class="pre">registry.map_imperatively()</span></code></a> method to apply ORM mappings to the
+class using Imperative.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 1.4: </span>Added support for direct mapping of Python dataclasses</p>
+</div>
+<p>To map an existing dataclass, SQLAlchemy’s “inline” declarative directives
+cannot be used directly; ORM directives are assigned using one of three
+techniques:</p>
+<ul class="simple">
+<li><p>Using “Declarative with Imperative Table”, the table / column to be mapped
+is defined using a <a class="reference internal" href="../core/metadata.html#sqlalchemy.schema.Table" title="sqlalchemy.schema.Table"><code class="xref py py-class docutils literal notranslate"><span class="pre">Table</span></code></a> object assigned to the
+<code class="docutils literal notranslate"><span class="pre">__table__</span></code> attribute of the class; relationships are defined within
+<code class="docutils literal notranslate"><span class="pre">__mapper_args__</span></code> dictionary.  The class is mapped using the
+<a class="reference internal" href="mapping_api.html#sqlalchemy.orm.registry.mapped" title="sqlalchemy.orm.registry.mapped"><code class="xref py py-meth docutils literal notranslate"><span class="pre">registry.mapped()</span></code></a> decorator.   An example is below at
+<a class="reference internal" href="#orm-declarative-dataclasses-imperative-table"><span class="std std-ref">Mapping dataclasses using Declarative With Imperative Table</span></a>.</p></li>
+<li><p>Using full “Declarative”, the Declarative-interpreted directives such as
+<a class="reference internal" href="../core/metadata.html#sqlalchemy.schema.Column" title="sqlalchemy.schema.Column"><code class="xref py py-class docutils literal notranslate"><span class="pre">Column</span></code></a>, <a class="reference internal" href="relationship_api.html#sqlalchemy.orm.relationship" title="sqlalchemy.orm.relationship"><code class="xref py py-func docutils literal notranslate"><span class="pre">relationship()</span></code></a> are added to the
+<code class="docutils literal notranslate"><span class="pre">.metadata</span></code> dictionary of the <code class="docutils literal notranslate"><span class="pre">dataclasses.field()</span></code> construct, where
+they are consumed by the declarative process.  The class is again
+mapped using the <a class="reference internal" href="mapping_api.html#sqlalchemy.orm.registry.mapped" title="sqlalchemy.orm.registry.mapped"><code class="xref py py-meth docutils literal notranslate"><span class="pre">registry.mapped()</span></code></a> decorator.  See the example
+below at <a class="reference internal" href="#orm-declarative-dataclasses-declarative-table"><span class="std std-ref">Mapping dataclasses using Declarative Mapping</span></a>.</p></li>
+<li><p>An “Imperative” mapping can be applied to an existing dataclass using
+the <a class="reference internal" href="mapping_api.html#sqlalchemy.orm.registry.map_imperatively" title="sqlalchemy.orm.registry.map_imperatively"><code class="xref py py-meth docutils literal notranslate"><span class="pre">registry.map_imperatively()</span></code></a> method to produce the mapping
+in exactly the same way as described at <a class="reference internal" href="mapping_styles.html#orm-imperative-mapping"><span class="std std-ref">Imperative Mapping</span></a>.
+This is illustrated below at <a class="reference internal" href="#orm-imperative-dataclasses"><span class="std std-ref">Mapping dataclasses using Imperative Mapping</span></a>.</p></li>
+</ul>
+<p>The general process by which SQLAlchemy applies mappings to a dataclass
+is the same as that of an ordinary class, but also includes that
+SQLAlchemy will detect class-level attributes that were part of the
+dataclasses declaration process and replace them at runtime with
+the usual SQLAlchemy ORM mapped attributes.   The <code class="docutils literal notranslate"><span class="pre">__init__</span></code> method that
+would have been generated by dataclasses is left intact, as is the same
+for all the other methods that dataclasses generates such as
+<code class="docutils literal notranslate"><span class="pre">__eq__()</span></code>, <code class="docutils literal notranslate"><span class="pre">__repr__()</span></code>, etc.</p>
+<section id="mapping-dataclasses-using-declarative-with-imperative-table">
+<span id="orm-declarative-dataclasses-imperative-table"></span><h3>Mapping dataclasses using Declarative With Imperative Table<a class="headerlink" href="#mapping-dataclasses-using-declarative-with-imperative-table" title="Permalink to this heading">¶</a></h3>
+<p>An example of a mapping using <code class="docutils literal notranslate"><span class="pre">&#64;dataclass</span></code> using
+<a class="reference internal" href="declarative_tables.html#orm-imperative-table-configuration"><span class="std std-ref">Declarative with Imperative Table (a.k.a. Hybrid Declarative)</span></a> is below. A complete
+<a class="reference internal" href="../core/metadata.html#sqlalchemy.schema.Table" title="sqlalchemy.schema.Table"><code class="xref py py-class docutils literal notranslate"><span class="pre">Table</span></code></a> object is constructed explicitly and assigned to the
+<code class="docutils literal notranslate"><span class="pre">__table__</span></code> attribute. Instance fields are defined using normal dataclass
+syntaxes. Additional <a class="reference internal" href="internals.html#sqlalchemy.orm.MapperProperty" title="sqlalchemy.orm.MapperProperty"><code class="xref py py-class docutils literal notranslate"><span class="pre">MapperProperty</span></code></a>
+definitions such as <a class="reference internal" href="relationship_api.html#sqlalchemy.orm.relationship" title="sqlalchemy.orm.relationship"><code class="xref py py-func docutils literal notranslate"><span class="pre">relationship()</span></code></a>, are placed in the
+<a class="reference internal" href="declarative_config.html#orm-declarative-mapper-options"><span class="std std-ref">__mapper_args__</span></a> class-level
+dictionary underneath the <code class="docutils literal notranslate"><span class="pre">properties</span></code> key, corresponding to the
+<a class="reference internal" href="mapping_api.html#sqlalchemy.orm.mapper.params.properties" title="sqlalchemy.orm.mapper"><code class="xref py py-paramref docutils literal notranslate"><span class="pre">mapper.properties</span></code></a> parameter:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
+
+<span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">Column</span><span class="p">,</span> <span class="n">ForeignKey</span><span class="p">,</span> <span class="n">Integer</span><span class="p">,</span> <span class="n">String</span><span class="p">,</span> <span class="n">Table</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy.orm</span> <span class="kn">import</span> <span class="n">registry</span><span class="p">,</span> <span class="n">relationship</span>
+
+<span class="n">mapper_registry</span> <span class="o">=</span> <span class="n">registry</span><span class="p">()</span>
+
+
+<span class="nd">@mapper_registry</span><span class="o">.</span><span class="n">mapped</span>
+<span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">User</span><span class="p">:</span>
+    <span class="n">__table__</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span>
+        <span class="s2">&quot;user&quot;</span><span class="p">,</span>
+        <span class="n">mapper_registry</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span>
+        <span class="n">Column</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="n">Integer</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+        <span class="n">Column</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="n">String</span><span class="p">(</span><span class="mi">50</span><span class="p">)),</span>
+        <span class="n">Column</span><span class="p">(</span><span class="s2">&quot;fullname&quot;</span><span class="p">,</span> <span class="n">String</span><span class="p">(</span><span class="mi">50</span><span class="p">)),</span>
+        <span class="n">Column</span><span class="p">(</span><span class="s2">&quot;nickname&quot;</span><span class="p">,</span> <span class="n">String</span><span class="p">(</span><span class="mi">12</span><span class="p">)),</span>
+    <span class="p">)</span>
+    <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">fullname</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">nickname</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">addresses</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Address</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
+
+    <span class="n">__mapper_args__</span> <span class="o">=</span> <span class="p">{</span>  <span class="c1"># type: ignore</span>
+        <span class="s2">&quot;properties&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;addresses&quot;</span><span class="p">:</span> <span class="n">relationship</span><span class="p">(</span><span class="s2">&quot;Address&quot;</span><span class="p">),</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+
+<span class="nd">@mapper_registry</span><span class="o">.</span><span class="n">mapped</span>
+<span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">Address</span><span class="p">:</span>
+    <span class="n">__table__</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span>
+        <span class="s2">&quot;address&quot;</span><span class="p">,</span>
+        <span class="n">mapper_registry</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span>
+        <span class="n">Column</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="n">Integer</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+        <span class="n">Column</span><span class="p">(</span><span class="s2">&quot;user_id&quot;</span><span class="p">,</span> <span class="n">Integer</span><span class="p">,</span> <span class="n">ForeignKey</span><span class="p">(</span><span class="s2">&quot;user.id&quot;</span><span class="p">)),</span>
+        <span class="n">Column</span><span class="p">(</span><span class="s2">&quot;email_address&quot;</span><span class="p">,</span> <span class="n">String</span><span class="p">(</span><span class="mi">50</span><span class="p">)),</span>
+    <span class="p">)</span>
+    <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">user_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">email_address</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span></pre></div>
+</div>
+<p>In the above example, the <code class="docutils literal notranslate"><span class="pre">User.id</span></code>, <code class="docutils literal notranslate"><span class="pre">Address.id</span></code>, and <code class="docutils literal notranslate"><span class="pre">Address.user_id</span></code>
+attributes are defined as <code class="docutils literal notranslate"><span class="pre">field(init=False)</span></code>. This means that parameters for
+these won’t be added to <code class="docutils literal notranslate"><span class="pre">__init__()</span></code> methods, but
+<a class="reference internal" href="session_api.html#sqlalchemy.orm.Session" title="sqlalchemy.orm.Session"><code class="xref py py-class docutils literal notranslate"><span class="pre">Session</span></code></a> will still be able to set them after getting their values
+during flush from autoincrement or other default value generator.   To
+allow them to be specified in the constructor explicitly, they would instead
+be given a default value of <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+<p>For a <a class="reference internal" href="relationship_api.html#sqlalchemy.orm.relationship" title="sqlalchemy.orm.relationship"><code class="xref py py-func docutils literal notranslate"><span class="pre">relationship()</span></code></a> to be declared separately, it needs to be
+specified directly within the <a class="reference internal" href="mapping_api.html#sqlalchemy.orm.mapper.params.properties" title="sqlalchemy.orm.mapper"><code class="xref py py-paramref docutils literal notranslate"><span class="pre">mapper.properties</span></code></a> dictionary
+which itself is specified within the <code class="docutils literal notranslate"><span class="pre">__mapper_args__</span></code> dictionary, so that it
+is passed to the <a class="reference internal" href="mapping_api.html#sqlalchemy.orm.mapper" title="sqlalchemy.orm.mapper"><code class="xref py py-func docutils literal notranslate"><span class="pre">mapper()</span></code></a> construction function. An alternative to this
+approach is in the next example.</p>
+</section>
+<section id="mapping-dataclasses-using-declarative-mapping">
+<span id="orm-declarative-dataclasses-declarative-table"></span><h3>Mapping dataclasses using Declarative Mapping<a class="headerlink" href="#mapping-dataclasses-using-declarative-mapping" title="Permalink to this heading">¶</a></h3>
+<p>The fully declarative approach requires that <a class="reference internal" href="../core/metadata.html#sqlalchemy.schema.Column" title="sqlalchemy.schema.Column"><code class="xref py py-class docutils literal notranslate"><span class="pre">Column</span></code></a> objects
+are declared as class attributes, which when using dataclasses would conflict
+with the dataclass-level attributes.  An approach to combine these together
+is to make use of the <code class="docutils literal notranslate"><span class="pre">metadata</span></code> attribute on the <code class="docutils literal notranslate"><span class="pre">dataclass.field</span></code>
+object, where SQLAlchemy-specific mapping information may be supplied.
+Declarative supports extraction of these parameters when the class
+specifies the attribute <code class="docutils literal notranslate"><span class="pre">__sa_dataclass_metadata_key__</span></code>.  This also
+provides a more succinct method of indicating the <a class="reference internal" href="relationship_api.html#sqlalchemy.orm.relationship" title="sqlalchemy.orm.relationship"><code class="xref py py-func docutils literal notranslate"><span class="pre">relationship()</span></code></a>
+association:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
+
+<span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">Column</span><span class="p">,</span> <span class="n">ForeignKey</span><span class="p">,</span> <span class="n">Integer</span><span class="p">,</span> <span class="n">String</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy.orm</span> <span class="kn">import</span> <span class="n">registry</span><span class="p">,</span> <span class="n">relationship</span>
+
+<span class="n">mapper_registry</span> <span class="o">=</span> <span class="n">registry</span><span class="p">()</span>
+
+
+<span class="nd">@mapper_registry</span><span class="o">.</span><span class="n">mapped</span>
+<span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">User</span><span class="p">:</span>
+    <span class="n">__tablename__</span> <span class="o">=</span> <span class="s2">&quot;user&quot;</span>
+
+    <span class="n">__sa_dataclass_metadata_key__</span> <span class="o">=</span> <span class="s2">&quot;sa&quot;</span>
+    <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;sa&quot;</span><span class="p">:</span> <span class="n">Column</span><span class="p">(</span><span class="n">Integer</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)})</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;sa&quot;</span><span class="p">:</span> <span class="n">Column</span><span class="p">(</span><span class="n">String</span><span class="p">(</span><span class="mi">50</span><span class="p">))})</span>
+    <span class="n">fullname</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;sa&quot;</span><span class="p">:</span> <span class="n">Column</span><span class="p">(</span><span class="n">String</span><span class="p">(</span><span class="mi">50</span><span class="p">))})</span>
+    <span class="n">nickname</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;sa&quot;</span><span class="p">:</span> <span class="n">Column</span><span class="p">(</span><span class="n">String</span><span class="p">(</span><span class="mi">12</span><span class="p">))})</span>
+    <span class="n">addresses</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Address</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span>
+        <span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;sa&quot;</span><span class="p">:</span> <span class="n">relationship</span><span class="p">(</span><span class="s2">&quot;Address&quot;</span><span class="p">)}</span>
+    <span class="p">)</span>
+
+
+<span class="nd">@mapper_registry</span><span class="o">.</span><span class="n">mapped</span>
+<span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">Address</span><span class="p">:</span>
+    <span class="n">__tablename__</span> <span class="o">=</span> <span class="s2">&quot;address&quot;</span>
+    <span class="n">__sa_dataclass_metadata_key__</span> <span class="o">=</span> <span class="s2">&quot;sa&quot;</span>
+    <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;sa&quot;</span><span class="p">:</span> <span class="n">Column</span><span class="p">(</span><span class="n">Integer</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)})</span>
+    <span class="n">user_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;sa&quot;</span><span class="p">:</span> <span class="n">Column</span><span class="p">(</span><span class="n">ForeignKey</span><span class="p">(</span><span class="s2">&quot;user.id&quot;</span><span class="p">))})</span>
+    <span class="n">email_address</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;sa&quot;</span><span class="p">:</span> <span class="n">Column</span><span class="p">(</span><span class="n">String</span><span class="p">(</span><span class="mi">50</span><span class="p">))})</span></pre></div>
+</div>
+</section>
+<section id="mapping-dataclasses-using-imperative-mapping">
+<span id="orm-imperative-dataclasses"></span><h3>Mapping dataclasses using Imperative Mapping<a class="headerlink" href="#mapping-dataclasses-using-imperative-mapping" title="Permalink to this heading">¶</a></h3>
+<p>As described previously, a class which is set up as a dataclass using the
+<code class="docutils literal notranslate"><span class="pre">&#64;dataclass</span></code> decorator can then be further decorated using the
+<a class="reference internal" href="mapping_api.html#sqlalchemy.orm.registry.mapped" title="sqlalchemy.orm.registry.mapped"><code class="xref py py-meth docutils literal notranslate"><span class="pre">registry.mapped()</span></code></a> decorator in order to apply declarative-style
+mapping to the class. As an alternative to using the
+<a class="reference internal" href="mapping_api.html#sqlalchemy.orm.registry.mapped" title="sqlalchemy.orm.registry.mapped"><code class="xref py py-meth docutils literal notranslate"><span class="pre">registry.mapped()</span></code></a> decorator, we may also pass the class through the
+<a class="reference internal" href="mapping_api.html#sqlalchemy.orm.registry.map_imperatively" title="sqlalchemy.orm.registry.map_imperatively"><code class="xref py py-meth docutils literal notranslate"><span class="pre">registry.map_imperatively()</span></code></a> method instead, so that we may pass all
+<a class="reference internal" href="../core/metadata.html#sqlalchemy.schema.Table" title="sqlalchemy.schema.Table"><code class="xref py py-class docutils literal notranslate"><span class="pre">Table</span></code></a> and <a class="reference internal" href="mapping_api.html#sqlalchemy.orm.mapper" title="sqlalchemy.orm.mapper"><code class="xref py py-func docutils literal notranslate"><span class="pre">mapper()</span></code></a> configuration imperatively to
+the function rather than having them defined on the class itself as class
+variables:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">field</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
+
+<span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">Column</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">ForeignKey</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">Integer</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">MetaData</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">String</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">Table</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy.orm</span> <span class="kn">import</span> <span class="n">registry</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy.orm</span> <span class="kn">import</span> <span class="n">relationship</span>
+
+<span class="n">mapper_registry</span> <span class="o">=</span> <span class="n">registry</span><span class="p">()</span>
+
+
+<span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">User</span><span class="p">:</span>
+    <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">fullname</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">nickname</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">addresses</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Address</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
+
+
+<span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">Address</span><span class="p">:</span>
+    <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">user_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">email_address</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>
+
+
+<span class="n">metadata_obj</span> <span class="o">=</span> <span class="n">MetaData</span><span class="p">()</span>
+
+<span class="n">user</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span>
+    <span class="s2">&quot;user&quot;</span><span class="p">,</span>
+    <span class="n">metadata_obj</span><span class="p">,</span>
+    <span class="n">Column</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="n">Integer</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+    <span class="n">Column</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="n">String</span><span class="p">(</span><span class="mi">50</span><span class="p">)),</span>
+    <span class="n">Column</span><span class="p">(</span><span class="s2">&quot;fullname&quot;</span><span class="p">,</span> <span class="n">String</span><span class="p">(</span><span class="mi">50</span><span class="p">)),</span>
+    <span class="n">Column</span><span class="p">(</span><span class="s2">&quot;nickname&quot;</span><span class="p">,</span> <span class="n">String</span><span class="p">(</span><span class="mi">12</span><span class="p">)),</span>
+<span class="p">)</span>
+
+<span class="n">address</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span>
+    <span class="s2">&quot;address&quot;</span><span class="p">,</span>
+    <span class="n">metadata_obj</span><span class="p">,</span>
+    <span class="n">Column</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="n">Integer</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+    <span class="n">Column</span><span class="p">(</span><span class="s2">&quot;user_id&quot;</span><span class="p">,</span> <span class="n">Integer</span><span class="p">,</span> <span class="n">ForeignKey</span><span class="p">(</span><span class="s2">&quot;user.id&quot;</span><span class="p">)),</span>
+    <span class="n">Column</span><span class="p">(</span><span class="s2">&quot;email_address&quot;</span><span class="p">,</span> <span class="n">String</span><span class="p">(</span><span class="mi">50</span><span class="p">)),</span>
+<span class="p">)</span>
+
+<span class="n">mapper_registry</span><span class="o">.</span><span class="n">map_imperatively</span><span class="p">(</span>
+    <span class="n">User</span><span class="p">,</span>
+    <span class="n">user</span><span class="p">,</span>
+    <span class="n">properties</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">&quot;addresses&quot;</span><span class="p">:</span> <span class="n">relationship</span><span class="p">(</span><span class="n">Address</span><span class="p">,</span> <span class="n">backref</span><span class="o">=</span><span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="n">order_by</span><span class="o">=</span><span class="n">address</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">id</span><span class="p">),</span>
+    <span class="p">},</span>
+<span class="p">)</span>
+
+<span class="n">mapper_registry</span><span class="o">.</span><span class="n">map_imperatively</span><span class="p">(</span><span class="n">Address</span><span class="p">,</span> <span class="n">address</span><span class="p">)</span></pre></div>
+</div>
+<section id="using-declarative-mixins-with-dataclasses">
+<span id="orm-declarative-dataclasses-mixin"></span><h4>Using Declarative Mixins with Dataclasses<a class="headerlink" href="#using-declarative-mixins-with-dataclasses" title="Permalink to this heading">¶</a></h4>
+<p>In the section <a class="reference internal" href="declarative_mixins.html"><span class="std std-ref">Composing Mapped Hierarchies with Mixins</span></a>, Declarative Mixin classes
+are introduced.  One requirement of declarative mixins is that certain
+constructs that can’t be easily duplicated must be given as callables,
+using the <a class="reference internal" href="mapping_api.html#sqlalchemy.orm.declared_attr" title="sqlalchemy.orm.declared_attr"><code class="xref py py-class docutils literal notranslate"><span class="pre">declared_attr</span></code></a> decorator, such as in the
+example at <a class="reference internal" href="declarative_mixins.html#orm-declarative-mixins-relationships"><span class="std std-ref">Mixing in Relationships</span></a>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">RefTargetMixin</span><span class="p">:</span>
+    <span class="nd">@declared_attr</span>
+    <span class="k">def</span> <span class="nf">target_id</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">Column</span><span class="p">(</span><span class="s2">&quot;target_id&quot;</span><span class="p">,</span> <span class="n">ForeignKey</span><span class="p">(</span><span class="s2">&quot;target.id&quot;</span><span class="p">))</span>
+
+    <span class="nd">@declared_attr</span>
+    <span class="k">def</span> <span class="nf">target</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">relationship</span><span class="p">(</span><span class="s2">&quot;Target&quot;</span><span class="p">)</span></pre></div>
+</div>
+<p>This form is supported within the Dataclasses <code class="docutils literal notranslate"><span class="pre">field()</span></code> object by using
+a lambda to indicate the SQLAlchemy construct inside the <code class="docutils literal notranslate"><span class="pre">field()</span></code>.
+Using <a class="reference internal" href="mapping_api.html#sqlalchemy.orm.declared_attr" title="sqlalchemy.orm.declared_attr"><code class="xref py py-func docutils literal notranslate"><span class="pre">declared_attr()</span></code></a> to surround the lambda is optional.
+If we wanted to produce our <code class="docutils literal notranslate"><span class="pre">User</span></code> class above where the ORM fields
+came from a mixin that is itself a dataclass, the form would be:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">UserMixin</span><span class="p">:</span>
+    <span class="n">__tablename__</span> <span class="o">=</span> <span class="s2">&quot;user&quot;</span>
+
+    <span class="n">__sa_dataclass_metadata_key__</span> <span class="o">=</span> <span class="s2">&quot;sa&quot;</span>
+
+    <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;sa&quot;</span><span class="p">:</span> <span class="n">Column</span><span class="p">(</span><span class="n">Integer</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)})</span>
+
+    <span class="n">addresses</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Address</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span>
+        <span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;sa&quot;</span><span class="p">:</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">relationship</span><span class="p">(</span><span class="s2">&quot;Address&quot;</span><span class="p">)}</span>
+    <span class="p">)</span>
+
+
+<span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">AddressMixin</span><span class="p">:</span>
+    <span class="n">__tablename__</span> <span class="o">=</span> <span class="s2">&quot;address&quot;</span>
+    <span class="n">__sa_dataclass_metadata_key__</span> <span class="o">=</span> <span class="s2">&quot;sa&quot;</span>
+    <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;sa&quot;</span><span class="p">:</span> <span class="n">Column</span><span class="p">(</span><span class="n">Integer</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)})</span>
+    <span class="n">user_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span>
+        <span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;sa&quot;</span><span class="p">:</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">Column</span><span class="p">(</span><span class="n">ForeignKey</span><span class="p">(</span><span class="s2">&quot;user.id&quot;</span><span class="p">))}</span>
+    <span class="p">)</span>
+    <span class="n">email_address</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;sa&quot;</span><span class="p">:</span> <span class="n">Column</span><span class="p">(</span><span class="n">String</span><span class="p">(</span><span class="mi">50</span><span class="p">))})</span>
+
+
+<span class="nd">@mapper_registry</span><span class="o">.</span><span class="n">mapped</span>
+<span class="k">class</span> <span class="nc">User</span><span class="p">(</span><span class="n">UserMixin</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+
+<span class="nd">@mapper_registry</span><span class="o">.</span><span class="n">mapped</span>
+<span class="k">class</span> <span class="nc">Address</span><span class="p">(</span><span class="n">AddressMixin</span><span class="p">):</span>
+    <span class="k">pass</span></pre></div>
+</div>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 1.4.2: </span>Added support for “declared attr” style mixin attributes,
+namely <a class="reference internal" href="relationship_api.html#sqlalchemy.orm.relationship" title="sqlalchemy.orm.relationship"><code class="xref py py-func docutils literal notranslate"><span class="pre">relationship()</span></code></a> constructs as well as <a class="reference internal" href="../core/metadata.html#sqlalchemy.schema.Column" title="sqlalchemy.schema.Column"><code class="xref py py-class docutils literal notranslate"><span class="pre">Column</span></code></a>
+objects with foreign key declarations, to be used within “Dataclasses
+with Declarative Table” style mappings.</p>
+</div>
+</section>
+</section>
+</section>
+<section id="applying-orm-mappings-to-an-existing-attrs-class">
+<span id="orm-declarative-attrs-imperative-table"></span><h2>Applying ORM mappings to an existing attrs class<a class="headerlink" href="#applying-orm-mappings-to-an-existing-attrs-class" title="Permalink to this heading">¶</a></h2>
+<p>The <a class="reference external" href="https://pypi.org/project/attrs/">attrs</a> library is a popular third party library that provides similar
+features as dataclasses, with many additional features provided not
+found in ordinary dataclasses.</p>
+<p>A class augmented with <a class="reference external" href="https://pypi.org/project/attrs/">attrs</a> uses the <code class="docutils literal notranslate"><span class="pre">&#64;define</span></code> decorator. This decorator
+initiates a process to scan the class for attributes that define the class’
+behavior, which are then used to generate methods, documentation, and
+annotations.</p>
+<p>The SQLAlchemy ORM supports mapping an <a class="reference external" href="https://pypi.org/project/attrs/">attrs</a> class using <strong>Declarative with
+Imperative Table</strong> or <strong>Imperative</strong> mapping. The general form of these two
+styles is fully equivalent to the
+<a class="reference internal" href="#orm-declarative-dataclasses-declarative-table"><span class="std std-ref">Mapping dataclasses using Declarative Mapping</span></a> and
+<a class="reference internal" href="#orm-declarative-dataclasses-imperative-table"><span class="std std-ref">Mapping dataclasses using Declarative With Imperative Table</span></a> mapping forms used with
+dataclasses, where the inline attribute directives used by dataclasses or attrs
+are unchanged, and SQLAlchemy’s table-oriented instrumentation is applied at
+runtime.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">&#64;define</span></code> decorator of <a class="reference external" href="https://pypi.org/project/attrs/">attrs</a> by default replaces the annotated class
+with a new __slots__ based class, which is not supported. When using the old
+style annotation <code class="docutils literal notranslate"><span class="pre">&#64;attr.s</span></code> or using <code class="docutils literal notranslate"><span class="pre">define(slots=False)</span></code>, the class
+does not get replaced. Furthermore attrs removes its own class-bound attributes
+after the decorator runs, so that SQLAlchemy’s mapping process takes over these
+attributes without any issue. Both decorators, <code class="docutils literal notranslate"><span class="pre">&#64;attr.s</span></code> and <code class="docutils literal notranslate"><span class="pre">&#64;define(slots=False)</span></code>
+work with SQLAlchemy.</p>
+<section id="mapping-attrs-with-declarative-imperative-table">
+<h3>Mapping attrs with Declarative “Imperative Table”<a class="headerlink" href="#mapping-attrs-with-declarative-imperative-table" title="Permalink to this heading">¶</a></h3>
+<p>In the “Declarative with Imperative Table” style, a <a class="reference internal" href="../core/metadata.html#sqlalchemy.schema.Table" title="sqlalchemy.schema.Table"><code class="xref py py-class docutils literal notranslate"><span class="pre">Table</span></code></a>
+object is declared inline with the declarative class.   The
+<code class="docutils literal notranslate"><span class="pre">&#64;define</span></code> decorator is applied to the class first, then the
+<a class="reference internal" href="mapping_api.html#sqlalchemy.orm.registry.mapped" title="sqlalchemy.orm.registry.mapped"><code class="xref py py-meth docutils literal notranslate"><span class="pre">registry.mapped()</span></code></a> decorator second:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
+
+<span class="kn">from</span> <span class="nn">attrs</span> <span class="kn">import</span> <span class="n">define</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">Column</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">ForeignKey</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">Integer</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">MetaData</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">String</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">Table</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy.orm</span> <span class="kn">import</span> <span class="n">registry</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy.orm</span> <span class="kn">import</span> <span class="n">relationship</span>
+
+<span class="n">mapper_registry</span> <span class="o">=</span> <span class="n">registry</span><span class="p">()</span>
+
+
+<span class="nd">@mapper_registry</span><span class="o">.</span><span class="n">mapped</span>
+<span class="nd">@define</span><span class="p">(</span><span class="n">slots</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">User</span><span class="p">:</span>
+    <span class="n">__table__</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span>
+        <span class="s2">&quot;user&quot;</span><span class="p">,</span>
+        <span class="n">mapper_registry</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span>
+        <span class="n">Column</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="n">Integer</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+        <span class="n">Column</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="n">String</span><span class="p">(</span><span class="mi">50</span><span class="p">)),</span>
+        <span class="n">Column</span><span class="p">(</span><span class="s2">&quot;fullname&quot;</span><span class="p">,</span> <span class="n">String</span><span class="p">(</span><span class="mi">50</span><span class="p">)),</span>
+        <span class="n">Column</span><span class="p">(</span><span class="s2">&quot;nickname&quot;</span><span class="p">,</span> <span class="n">String</span><span class="p">(</span><span class="mi">12</span><span class="p">)),</span>
+    <span class="p">)</span>
+    <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">fullname</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">nickname</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">addresses</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Address</span><span class="p">]</span>
+
+    <span class="n">__mapper_args__</span> <span class="o">=</span> <span class="p">{</span>  <span class="c1"># type: ignore</span>
+        <span class="s2">&quot;properties&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;addresses&quot;</span><span class="p">:</span> <span class="n">relationship</span><span class="p">(</span><span class="s2">&quot;Address&quot;</span><span class="p">),</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+
+<span class="nd">@mapper_registry</span><span class="o">.</span><span class="n">mapped</span>
+<span class="nd">@define</span><span class="p">(</span><span class="n">slots</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">Address</span><span class="p">:</span>
+    <span class="n">__table__</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span>
+        <span class="s2">&quot;address&quot;</span><span class="p">,</span>
+        <span class="n">mapper_registry</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span>
+        <span class="n">Column</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="n">Integer</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+        <span class="n">Column</span><span class="p">(</span><span class="s2">&quot;user_id&quot;</span><span class="p">,</span> <span class="n">Integer</span><span class="p">,</span> <span class="n">ForeignKey</span><span class="p">(</span><span class="s2">&quot;user.id&quot;</span><span class="p">)),</span>
+        <span class="n">Column</span><span class="p">(</span><span class="s2">&quot;email_address&quot;</span><span class="p">,</span> <span class="n">String</span><span class="p">(</span><span class="mi">50</span><span class="p">)),</span>
+    <span class="p">)</span>
+    <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">user_id</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">email_address</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span></pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">attrs</span></code> <code class="docutils literal notranslate"><span class="pre">slots=True</span></code> option, which enables <code class="docutils literal notranslate"><span class="pre">__slots__</span></code> on
+a mapped class, cannot be used with SQLAlchemy mappings without fully
+implementing alternative
+<a class="reference internal" href="examples.html#examples-instrumentation"><span class="std std-ref">attribute instrumentation</span></a>, as mapped
+classes normally rely upon direct access to <code class="docutils literal notranslate"><span class="pre">__dict__</span></code> for state storage.
+Behavior is undefined when this option is present.</p>
+</div>
+</section>
+<section id="mapping-attrs-with-imperative-mapping">
+<h3>Mapping attrs with Imperative Mapping<a class="headerlink" href="#mapping-attrs-with-imperative-mapping" title="Permalink to this heading">¶</a></h3>
+<p>Just as is the case with dataclasses, we can make use of
+<a class="reference internal" href="mapping_api.html#sqlalchemy.orm.registry.map_imperatively" title="sqlalchemy.orm.registry.map_imperatively"><code class="xref py py-meth docutils literal notranslate"><span class="pre">registry.map_imperatively()</span></code></a> to map an existing <code class="docutils literal notranslate"><span class="pre">attrs</span></code> class
+as well:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
+
+<span class="kn">from</span> <span class="nn">attrs</span> <span class="kn">import</span> <span class="n">define</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">Column</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">ForeignKey</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">Integer</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">MetaData</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">String</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">Table</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy.orm</span> <span class="kn">import</span> <span class="n">registry</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy.orm</span> <span class="kn">import</span> <span class="n">relationship</span>
+
+<span class="n">mapper_registry</span> <span class="o">=</span> <span class="n">registry</span><span class="p">()</span>
+
+
+<span class="nd">@define</span><span class="p">(</span><span class="n">slots</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">User</span><span class="p">:</span>
+    <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">fullname</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">nickname</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">addresses</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Address</span><span class="p">]</span>
+
+
+<span class="nd">@define</span><span class="p">(</span><span class="n">slots</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">Address</span><span class="p">:</span>
+    <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">user_id</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">email_address</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+
+
+<span class="n">metadata_obj</span> <span class="o">=</span> <span class="n">MetaData</span><span class="p">()</span>
+
+<span class="n">user</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span>
+    <span class="s2">&quot;user&quot;</span><span class="p">,</span>
+    <span class="n">metadata_obj</span><span class="p">,</span>
+    <span class="n">Column</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="n">Integer</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+    <span class="n">Column</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="n">String</span><span class="p">(</span><span class="mi">50</span><span class="p">)),</span>
+    <span class="n">Column</span><span class="p">(</span><span class="s2">&quot;fullname&quot;</span><span class="p">,</span> <span class="n">String</span><span class="p">(</span><span class="mi">50</span><span class="p">)),</span>
+    <span class="n">Column</span><span class="p">(</span><span class="s2">&quot;nickname&quot;</span><span class="p">,</span> <span class="n">String</span><span class="p">(</span><span class="mi">12</span><span class="p">)),</span>
+<span class="p">)</span>
+
+<span class="n">address</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span>
+    <span class="s2">&quot;address&quot;</span><span class="p">,</span>
+    <span class="n">metadata_obj</span><span class="p">,</span>
+    <span class="n">Column</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="n">Integer</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+    <span class="n">Column</span><span class="p">(</span><span class="s2">&quot;user_id&quot;</span><span class="p">,</span> <span class="n">Integer</span><span class="p">,</span> <span class="n">ForeignKey</span><span class="p">(</span><span class="s2">&quot;user.id&quot;</span><span class="p">)),</span>
+    <span class="n">Column</span><span class="p">(</span><span class="s2">&quot;email_address&quot;</span><span class="p">,</span> <span class="n">String</span><span class="p">(</span><span class="mi">50</span><span class="p">)),</span>
+<span class="p">)</span>
+
+<span class="n">mapper_registry</span><span class="o">.</span><span class="n">map_imperatively</span><span class="p">(</span>
+    <span class="n">User</span><span class="p">,</span>
+    <span class="n">user</span><span class="p">,</span>
+    <span class="n">properties</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">&quot;addresses&quot;</span><span class="p">:</span> <span class="n">relationship</span><span class="p">(</span><span class="n">Address</span><span class="p">,</span> <span class="n">backref</span><span class="o">=</span><span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="n">order_by</span><span class="o">=</span><span class="n">address</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">id</span><span class="p">),</span>
+    <span class="p">},</span>
+<span class="p">)</span>
+
+<span class="n">mapper_registry</span><span class="o">.</span><span class="n">map_imperatively</span><span class="p">(</span><span class="n">Address</span><span class="p">,</span> <span class="n">address</span><span class="p">)</span></pre></div>
+</div>
+<p>The above form is equivalent to the previous example using
+Declarative with Imperative Table.</p>
+</section>
+</section>
+</section>
+
+    </div>
+
+</div>
+
+<div id="docs-bottom-navigation" class="docs-navigation-links, withsidebar">
+        Previous:
+        <a href="declarative_mixins.html" title="previous chapter">Composing Mapped Hierarchies with Mixins</a>
+        Next:
+        <a href="scalar_mapping.html" title="next chapter">Mapping Columns and Expressions</a>
+
+    <div id="docs-copyright">
+        &copy; <a href="../copyright.html">Copyright</a> 2007-2023, the SQLAlchemy authors and contributors.
+
+
+    <p><b>flambé!</b> the dragon and <b><i>The Alchemist</i></b> image designs created and generously donated by <a href="https://github.com/vmalloc">Rotem Yaari</a>.</p>
+
+        Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 5.3.0.
+
+    Documentation last generated: Tue 03 Jan 2023 03:03:32 PM 
+
+    </div>
+</div>
+
+</div>
+
+
+
+        
+        
+
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+          URL_ROOT:    '../',
+          VERSION:     '1.4.46',
+          COLLAPSE_MODINDEX: false,
+          FILE_SUFFIX: '.html'
+      };
+    </script>
+
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+
+    <!-- begin iterate through sphinx environment script_files -->
+        <script type="text/javascript" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/sphinx_highlight.js"></script>
+        <script type="text/javascript" src="../_static/clipboard.min.js"></script>
+        <script type="text/javascript" src="../_static/copybutton.js"></script>
+    <!-- end iterate through sphinx environment script_files -->
+
+    <script type="text/javascript" src="../_static/init.js"></script>
+
+
+    </body>
+</html>
+
+
